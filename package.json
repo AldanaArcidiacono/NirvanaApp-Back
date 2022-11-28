@@ -1,0 +1,67 @@
+{
+    "name": "weekend7AldanaArcidiacono",
+    "version": "1.0.0",
+    "description": "API server with express",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "start": "node dist/index.js ",
+        "start:dev": "cross-env DEBUG=W7CH* PORT=7700 nodemon dist/index.js",
+        "build": "tsc",
+        "build:dev": "tsc --watch",
+        "test": "cross-env NODE_ENV=test jest --watchAll --coverage --runInBand",
+        "test:prod": "cross-env NODE_ENV=test jest --coverage --runInBand",
+        "dev": "run-p build:dev start:dev"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "prettier": {
+        "singleQuote": true
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "cross-env": "^7.0.3",
+        "debug": "^4.3.4",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^6.7.2",
+        "morgan": "^1.10.0",
+        "npm-run-all": "^4.1.5",
+        "serve-favicon": "^2.5.0"
+    },
+    "devDependencies": {
+        "@babel/plugin-transform-modules-commonjs": "^7.18.6",
+        "@types/bcryptjs": "^2.4.2",
+        "@types/cors": "^2.8.12",
+        "@types/debug": "^4.1.7",
+        "@types/express": "^4.17.14",
+        "@types/jest": "^29.2.2",
+        "@types/jsonwebtoken": "^8.5.9",
+        "@types/mongoose": "^5.11.97",
+        "@types/morgan": "^1.9.3",
+        "@types/node": "^18.11.9",
+        "@types/supertest": "^2.0.12",
+        "@typescript-eslint/eslint-plugin": "^5.42.1",
+        "@typescript-eslint/parser": "^5.42.1",
+        "bcryptjs": "^2.4.3",
+        "eslint": "^8.25.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-import": "^2.26.0",
+        "jest": "^29.1.2",
+        "jest-ts-webcompat-resolver": "^1.0.0",
+        "supertest": "^6.3.1",
+        "ts-jest": "^29.0.3",
+        "typescript": "^4.8.4"
+    },
+    "babel": {
+        "env": {
+            "test": {
+                "plugins": [
+                    "@babel/plugin-transform-modules-commonjs"
+                ]
+            }
+        }
+    }
+}
