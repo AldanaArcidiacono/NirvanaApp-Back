@@ -1,13 +1,16 @@
 import { Router } from 'express';
+import { PlacesController } from '../controllers/place.js';
+import { PlaceRepository } from '../repositories/place.js';
+import { UserRepository } from '../repositories/user.js';
 
 export const travelRouter = Router();
 
-// const controller = new placesController(
-//     PlacesRepository.getInstance(),
-//     UsersRepository.getInstance()
-// );
+const controller = new PlacesController(
+    PlaceRepository.getInstance(),
+    UserRepository.getInstance()
+);
 
-// travelRouter.get('/', controller.getAll.bind(controller));
+travelRouter.get('/', controller.getAll.bind(controller));
 // travelRouter.get('/:id', controller.get.bind(controller));
 // travelRouter.post('/create', authorization, controller.post.bind(controller));
 // travelRouter.patch(
