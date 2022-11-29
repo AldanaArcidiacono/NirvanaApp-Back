@@ -1,10 +1,10 @@
 import { IUser, User } from '../entities/user.js';
-import { Repo, id } from './repo.js';
+import { id, BasicRepo } from './repo.js';
 import createDebug from 'debug';
 import { passwdEncrypt } from '../services/auth.js';
 const debug = createDebug('FP2022:repositories:user');
 
-export class UserRepository implements Repo<IUser> {
+export class UserRepository implements BasicRepo<IUser> {
     static instance: UserRepository;
 
     public static getInstance(): UserRepository {
@@ -18,12 +18,6 @@ export class UserRepository implements Repo<IUser> {
 
     private constructor() {
         debug('instance');
-    }
-
-    async getAll(): Promise<Array<IUser>> {
-        debug('getAll');
-        const result = this.#Model.find();
-        return result;
     }
 
     async get(id: id): Promise<IUser> {
@@ -46,21 +40,5 @@ export class UserRepository implements Repo<IUser> {
         const result = await this.#Model.findOne(search);
         if (!result) throw new Error('Not found id');
         return result;
-    }
-
-    async patch(id: id, data: Partial<IUser>): Promise<IUser> {
-        debug('patch', id);
-        const result = await this.#Model.findByIdAndUpdate(id, data, {
-            new: true,
-        });
-        if (!result) throw new Error('Not found id');
-        return result;
-    }
-
-    async delete(id: id): Promise<id> {
-        debug('delete', id);
-        const result = await this.#Model.findByIdAndDelete(id);
-        if (result === null) throw new Error('Not found id');
-        return id;
     }
 }
