@@ -1,12 +1,12 @@
 {
-    "name": "weekend7AldanaArcidiacono",
+    "name": "FinalProyectBack-AldanaArcidiacono",
     "version": "1.0.0",
     "description": "API server with express",
     "main": "index.js",
     "type": "module",
     "scripts": {
         "start": "node dist/index.js ",
-        "start:dev": "cross-env DEBUG=W7CH* PORT=7700 nodemon dist/index.js",
+        "start:dev": "cross-env DEBUG=FP2022* PORT=7700 nodemon dist/index.js",
         "build": "tsc",
         "build:dev": "tsc --watch",
         "test": "cross-env NODE_ENV=test jest --watchAll --coverage --runInBand",
