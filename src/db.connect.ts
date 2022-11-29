@@ -8,5 +8,6 @@ export function dbConnect() {
             : 'FinalProjectTesting';
     let uri = `mongodb+srv://${USER}:${PASSWORD}`;
     uri += `@${CLUSTER}/${DBName}?retryWrites=true&w=majority`;
+
     return mongoose.connect(uri);
 }
