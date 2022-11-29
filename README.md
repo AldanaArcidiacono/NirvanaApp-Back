@@ -20,10 +20,6 @@ Además la página contará con un buscador (solo para usuarios logados) filtre 
 Generar un calendario donde el usuario pueda indicar que visitará un determinado lugar, en una fecha determinada. Esto se reflejará en su lista de lugares y en
 el inicio, cuando este loggeado.
 
-### ExtrasExtras
-
-Que puedas ver los lugares a donde planifican viajar otros usuarios y agregar amigos.
-
 ### Modelo de datos
 
 ```
