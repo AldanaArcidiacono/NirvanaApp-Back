@@ -6,7 +6,7 @@ export type Category = {
 
 export type IPlace = {
     id: Types.ObjectId;
-    country: string;
+    city: string;
     description: string;
     mustVisit: string;
     img: string;
@@ -17,7 +17,7 @@ export type IPlace = {
 };
 
 export type IProtoPlace = {
-    country?: string;
+    city?: string;
     description?: string;
     mustVisit?: string;
     img?: string;
@@ -28,7 +28,7 @@ export type IProtoPlace = {
 };
 
 export const placeSchema = new Schema<IPlace>({
-    country: {
+    city: {
         type: String,
         required: true,
         unique: true,
