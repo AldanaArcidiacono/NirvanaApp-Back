@@ -19,12 +19,8 @@ describe("Given the Place's repository,", () => {
 
     const repository = PlaceRepository.getInstance();
 
-    const badFormattedId = '9';
-    const invalidId = '237b492da27b69a98b1916a9';
-    let testIds: Array<string>;
-
     beforeAll(async () => {
-        testIds = await setUp();
+        await setUp();
     });
 
     describe('When we instantiate getAll() and it has called Model.find', () => {
