@@ -1,6 +1,6 @@
 import createDebug from 'debug';
 import { IPlace, Place } from '../entities/place.js';
-import { Repo } from './repo.js';
+import { Repo, id } from './repo.js';
 const debug = createDebug('FP2022:repositories:place');
 
 export class PlaceRepository implements Repo<IPlace> {
@@ -25,9 +25,27 @@ export class PlaceRepository implements Repo<IPlace> {
         return result;
     }
 
-    patch!: (id: string, data: Partial<IPlace>) => Promise<IPlace>;
+    async get(id: id): Promise<IPlace> {
+        debug('get', id);
+        const result = await this.#Model.findById(id);
+        if (!result) throw new Error('Not found id');
+        return result;
+    }
+
+    async create(data: Partial<IPlace>): Promise<IPlace> {
+        debug('post', data);
+        return await this.#Model.create(data);
+    }
+
+    async update(id: id, data: Partial<IPlace>): Promise<IPlace> {
+        debug('patch', id);
+        const result = await this.#Model.findByIdAndUpdate(id, data, {
+            new: true,
+        });
+        if (!result) throw new Error('Not found id');
+        return result;
+    }
+
     delete!: (id: string) => Promise<string>;
-    get!: (id: string) => Promise<IPlace>;
-    post!: (data: Partial<IPlace>) => Promise<IPlace>;
-    find!: (data: Partial<IPlace>) => Promise<IPlace>;
+    query!: (data: Partial<IPlace>) => Promise<IPlace>;
 }

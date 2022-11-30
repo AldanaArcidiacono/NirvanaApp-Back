@@ -22,22 +22,34 @@ export class UserRepository implements BasicRepo<IUser> {
 
     async get(id: id): Promise<IUser> {
         debug('get', id);
-        const result = await this.#Model.findById(id);
+        const result = await this.#Model
+            .findById(id)
+            .populate('favPlaces')
+            .populate('createdPlaces');
         if (!result) throw new Error('Not found id');
         return result;
     }
 
-    async post(data: Partial<IUser>): Promise<IUser> {
-        debug('post', data);
+    async create(data: Partial<IUser>): Promise<IUser> {
+        debug('create', data);
         if (typeof data.password !== 'string') throw new Error('No info found');
         data.password = await passwdEncrypt(data.password);
         const result = await this.#Model.create(data);
         return result;
     }
 
-    async find(search: Partial<IUser>): Promise<IUser> {
-        debug('find', { search });
+    async query(search: Partial<IUser>): Promise<IUser> {
+        debug('query', { search });
         const result = await this.#Model.findOne(search);
+        if (!result) throw new Error('Not found id');
+        return result;
+    }
+
+    async update(id: id, data: Partial<IUser>): Promise<IUser> {
+        debug('patch', id);
+        const result = await this.#Model.findByIdAndUpdate(id, data, {
+            new: true,
+        });
         if (!result) throw new Error('Not found id');
         return result;
     }
