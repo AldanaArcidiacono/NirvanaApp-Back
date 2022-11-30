@@ -52,26 +52,26 @@ describe('Given UserRepository', () => {
                 password: '123',
                 email: 'marcos@gmail.com',
             };
-            await repository.post(newUser);
+            await repository.create(newUser);
             expect(newUser.name).toEqual('Marcos');
         });
 
         test('and receives an invalid data it should return an error', async () => {
             expect(async () => {
-                await repository.post({ password: testIds[2] });
+                await repository.create({ password: testIds[2] });
             }).rejects.toThrow();
         });
     });
 
     describe('When we instantiate find()', () => {
         test('Then it should return one user', async () => {
-            await repository.find(mockData[0]);
+            await repository.query(mockData[0]);
             expect(mockData[0].name).toEqual('Pepe');
         });
 
         test('and receives an invalid id it should return an error', async () => {
             expect(async () => {
-                await repository.find({ name: 'Marcos' });
+                await repository.query({ name: 'Marcos' });
             }).rejects.toThrow();
         });
     });

@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 import { CustomError, HTTPError } from '../interface/error';
 import { PlaceRepository } from '../repositories/place';
 import { UserRepository } from '../repositories/user';
+import { createToken, passwdValidate } from '../services/auth';
 import { UsersController } from './user';
 
 jest.mock('../services/auth');
@@ -13,17 +14,20 @@ describe('Given the users controller,', () => {
         const placeRepo = PlaceRepository.getInstance();
 
         const userId = new Types.ObjectId();
-        const userController = new UsersController(userRepo, placeRepo);
 
         const mockData = [
-            { name: 'Pepe', id: userId },
-            { name: 'Ernesto', id: userId },
+            {
+                name: 'Pepe',
+                email: 'pepe@gmail.com',
+                id: userId,
+                password: '1234',
+            },
         ];
 
-        userRepo.post = jest.fn().mockResolvedValue({
-            id: userId,
-            name: 'Pepe',
-        });
+        userRepo.create = jest.fn().mockResolvedValue(mockData[0]);
+        userRepo.query = jest.fn().mockResolvedValue(mockData[0]);
+
+        const userController = new UsersController(userRepo, placeRepo);
 
         let req: Partial<Request>;
         let res: Partial<Response>;
@@ -42,31 +46,35 @@ describe('Given the users controller,', () => {
                 res as Response,
                 next
             );
-            expect(res.json).toHaveBeenCalledWith({
-                user: {
-                    id: userId,
-                    name: 'Pepe',
-                },
-            });
+            expect(res.json).toHaveBeenCalledWith({ user: mockData[0] });
         });
 
         test('Then login should have been called', async () => {
-            req.body = { mockData };
-            await userController.register(
-                req as Request,
-                res as Response,
-                next
-            );
-            expect(res.json).toHaveBeenCalledWith({ user: mockData[0] });
+            req.body = { email: mockData[0].email };
+            await userRepo.query({ email: req.body.email });
+            (passwdValidate as jest.Mock).mockResolvedValue(true);
+            (createToken as jest.Mock).mockReturnValue('token');
+            req.body = mockData[0].password;
+            await userController.login(req as Request, res as Response, next);
+            expect(res.json).toHaveBeenCalledWith({ token: 'token' });
         });
     });
+});
 
-    describe('when we dont instantiate it', () => {
-        const error: CustomError = new HTTPError(
+describe('Given the users controller, but', () => {
+    describe('When something goes wrong', () => {
+        const error404: CustomError = new HTTPError(
             404,
             'Not found id',
             'message of error'
         );
+
+        const error503: CustomError = new HTTPError(
+            503,
+            'Service unavailable',
+            'message of error'
+        );
+
         const userRepo = UserRepository.getInstance();
         const placeRepo = PlaceRepository.getInstance();
 
@@ -78,22 +86,18 @@ describe('Given the users controller,', () => {
         };
         const next: NextFunction = jest.fn();
 
-        test('Then if something went wrong register should throw an error', async () => {
-            await userController.register(
-                req as Request,
-                res as Response,
-                next
-            );
-            expect(error).toBeInstanceOf(HTTPError);
+        test('Then register should throw an error', async () => {
+            await userController.login(req as Request, res as Response, next);
+            expect(error503).toBeInstanceOf(HTTPError);
         });
 
         test('Then if something went wrong login should throw an error', async () => {
             await userController.login(req as Request, res as Response, next);
-            expect(error).toBeInstanceOf(HTTPError);
+            expect(error404).toBeInstanceOf(HTTPError);
         });
 
         test('Then if there is not password login should throw an error', async () => {
-            userRepo.find = jest.fn().mockResolvedValue({
+            userRepo.query = jest.fn().mockResolvedValue({
                 id: '637d1d346346f6ff04b55896',
                 name: 'pepe',
                 role: 'admin',
@@ -101,7 +105,7 @@ describe('Given the users controller,', () => {
 
             await userController.login(req as Request, res as Response, next);
 
-            expect(error).toBeInstanceOf(HTTPError);
+            expect(error404).toBeInstanceOf(HTTPError);
         });
     });
 });
