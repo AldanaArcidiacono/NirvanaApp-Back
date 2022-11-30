@@ -5,14 +5,16 @@ export type IUser = {
     name: string;
     email: string;
     password: string;
-    visitedPlaces: Array<Types.ObjectId>;
+    favPlaces: Array<Types.ObjectId>;
+    createdPlaces: Array<Types.ObjectId>;
 };
 
 export type IProtoUser = {
     name?: string;
     email?: string;
     password?: string;
-    visitedPlaces?: Array<Types.ObjectId>;
+    favPlaces?: Array<Types.ObjectId>;
+    createdPlaces?: Array<Types.ObjectId>;
 };
 
 export const userSchema = new Schema<IUser>({
@@ -27,7 +29,13 @@ export const userSchema = new Schema<IUser>({
         unique: true,
     },
     password: String,
-    visitedPlaces: [
+    favPlaces: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Place',
+        },
+    ],
+    createdPlaces: [
         {
             type: Schema.Types.ObjectId,
             ref: 'Place',

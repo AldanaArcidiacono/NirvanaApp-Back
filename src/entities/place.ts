@@ -1,7 +1,7 @@
 import { model, Schema, Types } from 'mongoose';
 
 export type Category = {
-    category: 'beach' | 'mountain' | 'forest' | 'lake';
+    category: 'beach' | 'mountain' | 'forest' | 'lake' | 'city';
 };
 
 export type IPlace = {
@@ -10,10 +10,8 @@ export type IPlace = {
     description: string;
     mustVisit: string;
     img: string;
-    isVisited: boolean;
-    isNewPlace: boolean;
     category: Category;
-    traveler: Types.ObjectId;
+    owner: Types.ObjectId;
 };
 
 export type IProtoPlace = {
@@ -21,10 +19,8 @@ export type IProtoPlace = {
     description?: string;
     mustVisit?: string;
     img?: string;
-    isVisited?: boolean;
-    isNewPlace?: boolean;
     category?: Category;
-    traveler?: Types.ObjectId;
+    owner?: Types.ObjectId;
 };
 
 export const placeSchema = new Schema<IPlace>({
@@ -36,14 +32,11 @@ export const placeSchema = new Schema<IPlace>({
     description: {
         type: String,
         required: true,
-        unique: true,
     },
     mustVisit: String,
     img: String,
-    isVisited: Boolean,
-    isNewPlace: Boolean,
     category: String,
-    traveler: Types.ObjectId,
+    owner: Types.ObjectId,
 });
 
 placeSchema.set('toJSON', {
