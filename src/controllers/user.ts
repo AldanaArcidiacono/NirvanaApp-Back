@@ -18,7 +18,7 @@ export class UsersController {
     async register(req: Request, res: Response, next: NextFunction) {
         try {
             debug('register');
-            const user = await this.userRepo.post(req.body);
+            const user = await this.userRepo.create(req.body);
             res.status(201).json({ user });
         } catch (error) {
             const httpError = new HTTPError(
@@ -33,7 +33,7 @@ export class UsersController {
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             debug('login', req.body.email);
-            const user = await this.userRepo.find({ email: req.body.email });
+            const user = await this.userRepo.query({ email: req.body.email });
             const isPasswdValid = await passwdValidate(
                 req.body.password,
                 user.password
@@ -46,6 +46,21 @@ export class UsersController {
             res.json({ token });
         } catch (error) {
             next(this.#createHttpError(error as Error));
+        }
+    }
+
+    async get(req: Request, res: Response, next: NextFunction) {
+        try {
+            debug('get');
+            const users = await this.userRepo.get(req.params.id);
+            res.json({ users });
+        } catch (error) {
+            const httpError = new HTTPError(
+                503,
+                'Service unavailable',
+                (error as Error).message
+            );
+            next(httpError);
         }
     }
 
