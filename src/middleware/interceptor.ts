@@ -3,7 +3,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { HTTPError } from '../interface/error.js';
 import { verifyToken } from '../services/auth.js';
 import createDebug from 'debug';
-import { PlaceRepository } from '../repositories/place.js';
+import { UserRepository } from '../repositories/user.js';
 const debug = createDebug('W7CH:middleware:interceptor');
 
 export interface ExtraRequest extends Request {
@@ -12,7 +12,7 @@ export interface ExtraRequest extends Request {
 
 export const authorization = (
     req: ExtraRequest,
-    res: Response,
+    _res: Response,
     next: NextFunction
 ) => {
     debug('authorization');
@@ -36,10 +36,10 @@ export const authentication = async (
     next: NextFunction
 ) => {
     debug('authentication');
-    const placeRepo = PlaceRepository.getInstance();
+    const userRepo = UserRepository.getInstance();
     try {
-        const robot = await placeRepo.get(req.params.id);
-        if (!req.payload || robot.favUser._id.toString() !== req.payload.id) {
+        const user = await userRepo.get(req.params.id);
+        if (!req.payload || user.favPlaces.toString() !== req.payload.id) {
             next(
                 new HTTPError(
                     403,

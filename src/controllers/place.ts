@@ -53,13 +53,7 @@ export class PlacesController {
             }
             const user = await this.userRepo.get(req.payload.id);
             req.body.owner = user.id;
-            req.body.owner = user.id;
             const place = await this.placeRepo.create(req.body);
-
-            user.favPlaces.push(place.id);
-            this.userRepo.update(user.id.toString(), {
-                favPlaces: user.favPlaces,
-            });
 
             user.createdPlaces.push(place.id);
             this.userRepo.update(user.id.toString(), {

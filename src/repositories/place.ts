@@ -33,12 +33,12 @@ export class PlaceRepository implements Repo<IPlace> {
     }
 
     async create(data: Partial<IPlace>): Promise<IPlace> {
-        debug('post', data);
+        debug('create', data);
         return await this.#Model.create(data);
     }
 
     async update(id: id, data: Partial<IPlace>): Promise<IPlace> {
-        debug('patch', id);
+        debug('update', id);
         const result = await this.#Model.findByIdAndUpdate(id, data, {
             new: true,
         });

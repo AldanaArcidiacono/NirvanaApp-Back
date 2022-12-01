@@ -6,12 +6,10 @@ export default {
         'dist',
         'src/entities',
         'node_modules/supertest/lib/test',
-        'src/middleware',
     ],
     coveragePathIgnorePatterns: [
         'src/entities',
         'node_modules/supertest/lib/test',
-        'src/middleware',
     ],
     resolver: 'jest-ts-webcompat-resolver',
 };
