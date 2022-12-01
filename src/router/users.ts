@@ -5,10 +5,11 @@ import { UserRepository } from '../repositories/user.js';
 
 export const usersRouter = Router();
 
-const controller = new UsersController(
+const userController = new UsersController(
     UserRepository.getInstance(),
     PlaceRepository.getInstance()
 );
 
-usersRouter.post('/register', controller.register.bind(controller));
-usersRouter.post('/login', controller.login.bind(controller));
+usersRouter.post('/register', userController.register.bind(userController));
+usersRouter.post('/login', userController.login.bind(userController));
+usersRouter.get('/:id', userController.get.bind(userController));

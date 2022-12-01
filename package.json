@@ -9,7 +9,8 @@
         "start:dev": "cross-env DEBUG=FP2022* PORT=7700 nodemon dist/index.js",
         "build": "tsc",
         "build:dev": "tsc --watch",
-        "test": "cross-env NODE_ENV=test jest --watchAll --coverage --runInBand",
+        "test": "cross-env NODE_ENV=test jest --watchAll --coverage",
+        "super:test": "cross-env NODE_ENV=test jest --watchAll --coverage --runInBand",
         "test:prod": "cross-env NODE_ENV=test jest --coverage --runInBand",
         "dev": "run-p build:dev start:dev"
     },
