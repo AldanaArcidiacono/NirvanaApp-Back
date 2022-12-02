@@ -8,6 +8,8 @@ describe("Given the Place's repository,", () => {
         { city: 'Madrid', description: 'cute' },
         { city: 'Buenos Aires', description: 'nice' },
     ];
+    const newMockData = { city: 'jamaica', description: 'very nice' };
+
     let testIds: Array<string>;
 
     const setUp = async () => {
@@ -49,15 +51,21 @@ describe("Given the Place's repository,", () => {
 
     describe('When we instantiate create()', () => {
         test('Then it should create a new city', async () => {
-            const newMockData = { city: 'Jamaica', description: 'very nice' };
             const result = await placeRepo.create(newMockData);
-            expect(result.city).toEqual('Jamaica');
+            expect(result.city).toEqual('jamaica');
         });
 
         test('and receives an invalid data, it should return an error', async () => {
             expect(async () => {
                 await placeRepo.create(mockData[5]);
             }).rejects.toThrowError();
+        });
+    });
+
+    describe('When we instantiate query()', () => {
+        test('Then it should query return the search place', async () => {
+            const result = await placeRepo.query('city', 'Jamaica');
+            expect(result[0].city).toEqual(newMockData.city);
         });
     });
 

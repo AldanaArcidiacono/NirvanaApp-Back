@@ -67,13 +67,13 @@ describe('Given UserRepository', () => {
 
     describe('When we instantiate find()', () => {
         test('Then it should return one user', async () => {
-            await userRepo.query(mockData[0]);
+            await userRepo.find(mockData[0]);
             expect(mockData[0].name).toEqual('Pepe');
         });
 
         test('and receives an invalid id it should return an error', async () => {
             expect(async () => {
-                await userRepo.query({ name: '' });
+                await userRepo.find({ name: '' });
             }).rejects.toThrow();
         });
     });

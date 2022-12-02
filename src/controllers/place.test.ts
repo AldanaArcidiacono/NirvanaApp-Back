@@ -14,7 +14,7 @@ const mockUser = {
     users: { id: '1a', name: 'Sergio', email: 'sergio@gmil.com' },
 };
 
-const mockResponse = { places: ['Marcos'] };
+const mockResponse = { places: ['Madrid'] };
 
 describe("Given the place's controller,", () => {
     const placeRepo = PlaceRepository.getInstance();
@@ -22,10 +22,6 @@ describe("Given the place's controller,", () => {
 
     const userId = new Types.ObjectId();
 
-    placeRepo.getAll = jest
-        .fn()
-        .mockResolvedValue([{ city: 'Roma', description: 'super-cute' }]);
-    placeRepo.get = jest.fn().mockResolvedValue(mockResponse);
     placeRepo.create = jest.fn().mockResolvedValue({
         ...mockPlace.places[0],
         id: '123456789012345678901234',
@@ -49,6 +45,9 @@ describe("Given the place's controller,", () => {
     const next: NextFunction = jest.fn();
 
     describe('When we instantiate getAll()', () => {
+        placeRepo.getAll = jest
+            .fn()
+            .mockResolvedValue([{ city: 'Roma', description: 'super-cute' }]);
         test('It should return an array of all the places', async () => {
             await placeController.getAll(req as Request, res as Response, next);
             expect(res.json).toHaveBeenCalledWith(mockPlace);
@@ -56,10 +55,23 @@ describe("Given the place's controller,", () => {
     });
 
     describe('When we instantiate get()', () => {
+        placeRepo.get = jest.fn().mockResolvedValue(mockResponse);
         test('It should return one place', async () => {
             req.params = { id: '9' };
             await placeController.get(req as Request, res as Response, next);
             expect(res.json).toHaveBeenCalledWith(mockPlace);
+        });
+    });
+
+    describe('When we instantiate find()', () => {
+        req.params = { key: 'category' };
+        req.params = { value: 'beach' };
+        placeRepo.query = jest.fn().mockResolvedValue({ category: 'beach' });
+        test('It should return the place search by params', async () => {
+            await placeController.find(req as Request, res as Response, next);
+            expect(res.json).toHaveBeenCalledWith({
+                places: { category: 'beach' },
+            });
         });
     });
 
@@ -101,18 +113,6 @@ describe("Given the place's controller but,", () => {
         };
         const next: NextFunction = jest.fn();
 
-        test('should return an error', async () => {
-            error.message = 'Not found id';
-            error.statusCode = 404;
-            error.statusMessage = 'Not found';
-            expect(error).toBeInstanceOf(Error);
-            expect(error).toBeInstanceOf(HTTPError);
-            expect(error).toHaveProperty('statusCode', 404);
-            expect(error).toHaveProperty('statusMessage', 'Not found');
-            expect(error).toHaveProperty('message', 'Not found id');
-            expect(error).toHaveProperty('name', 'HTTPError');
-        });
-
         test('Then getAll() should return an error', async () => {
             placeRepo.getAll = jest.fn().mockRejectedValue('');
             error = new HTTPError(
@@ -137,6 +137,18 @@ describe("Given the place's controller but,", () => {
                 'Not found service'
             );
             await placeController.get(req as Request, resp as Response, next);
+            expect(error).toBeInstanceOf(Error);
+            expect(error).toBeInstanceOf(HTTPError);
+        });
+
+        test('Then find() should return an error', async () => {
+            placeRepo.query = jest.fn().mockRejectedValue('');
+            error = new HTTPError(
+                503,
+                'Service unavailable',
+                'Not found service'
+            );
+            await placeController.find(req as Request, resp as Response, next);
             expect(error).toBeInstanceOf(Error);
             expect(error).toBeInstanceOf(HTTPError);
         });

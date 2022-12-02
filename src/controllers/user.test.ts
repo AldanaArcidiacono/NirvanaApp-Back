@@ -33,7 +33,7 @@ describe('Given the users controller,', () => {
             placeRepo = PlaceRepository.getInstance();
 
             userRepo.create = jest.fn().mockResolvedValue(mockData[0]);
-            userRepo.query = jest.fn().mockResolvedValue(mockData[0]);
+            userRepo.find = jest.fn().mockResolvedValue(mockData[0]);
             userRepo.get = jest.fn().mockResolvedValue(mockResponse);
 
             userController = new UsersController(userRepo, placeRepo);
@@ -56,7 +56,7 @@ describe('Given the users controller,', () => {
 
         test('Then login should have been called', async () => {
             req.body = { email: mockData[0].email };
-            await userRepo.query({ email: req.body.email });
+            await userRepo.find({ email: req.body.email });
             (passwdValidate as jest.Mock).mockResolvedValue(true);
             (createToken as jest.Mock).mockReturnValue('token');
             req.body = mockData[0].password;
@@ -81,11 +81,9 @@ describe('Given the users controller, but', () => {
         error = new HTTPError(404, 'Not found', 'Not found id');
     });
 
-    const mockResponse = { users: ['Marcos'] };
-
     userRepo.create = jest.fn().mockResolvedValue(['Roma']);
-    userRepo.query = jest.fn().mockResolvedValue(mockData[0]);
-    userRepo.get = jest.fn().mockResolvedValue(mockResponse);
+    userRepo.find = jest.fn().mockResolvedValue(mockData[0]);
+    userRepo.get = jest.fn().mockResolvedValue('');
     const userController = new UsersController(userRepo, placeRepo);
 
     const req: Partial<Request> = {};
@@ -106,12 +104,18 @@ describe('Given the users controller, but', () => {
         });
 
         test('Then login should throw an error', async () => {
-            userRepo.query = jest.fn().mockResolvedValue({
+            userRepo.find = jest.fn().mockResolvedValue({
                 id: '637d1d346346f6ff04b55896',
                 name: 'pepe',
                 role: 'admin',
             });
             await userController.login(req as Request, res as Response, next);
+            expect(error).toBeInstanceOf(HTTPError);
+        });
+
+        test('Then get should throw an error', async () => {
+            await userController.get(req as Request, res as Response, next);
+            expect(error).toBeInstanceOf(Error);
             expect(error).toBeInstanceOf(HTTPError);
         });
     });
