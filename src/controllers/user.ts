@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import createDebug from 'debug';
 import { IUser } from '../entities/user.js';
-import { BasicRepo, Repo } from '../repositories/repo.js';
+import { PlacesRepo, UserRepo } from '../repositories/repo.js';
 import { IPlace } from '../entities/place.js';
 import { HTTPError } from '../interface/error.js';
 import { createToken, passwdValidate } from '../services/auth.js';
@@ -9,8 +9,8 @@ const debug = createDebug('FP2022:controllers:user');
 
 export class UsersController {
     constructor(
-        public readonly userRepo: BasicRepo<IUser>,
-        public readonly placesRepo: Repo<IPlace>
+        public readonly userRepo: UserRepo<IUser>,
+        public readonly placesRepo: PlacesRepo<IPlace>
     ) {
         debug('instance');
     }
@@ -33,7 +33,7 @@ export class UsersController {
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             debug('login', req.body.email);
-            const user = await this.userRepo.query({ email: req.body.email });
+            const user = await this.userRepo.find({ email: req.body.email });
             const isPasswdValid = await passwdValidate(
                 req.body.password,
                 user.password
