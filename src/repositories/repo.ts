@@ -3,17 +3,15 @@ export type id = string;
 export interface BasicRepo<T> {
     get: (id: id) => Promise<T>;
     create: (data: Partial<T>) => Promise<T>;
-    query: (data: Partial<T>) => Promise<T>;
     update: (id: id, data: Partial<T>) => Promise<T>;
 }
 
-export interface ExtraRepo<T> {
-    getAll: () => Promise<Array<T>>;
-    update: (id: id, data: Partial<T>) => Promise<T>;
-    delete: (id: id) => Promise<id>;
+export interface UserRepo<T> extends BasicRepo<T> {
+    find: (data: Partial<T>) => Promise<T>;
 }
 
-export interface Repo<T> extends BasicRepo<T> {
+export interface PlacesRepo<T> extends BasicRepo<T> {
     getAll: () => Promise<Array<T>>;
+    query: (key: string, value: string) => Promise<Array<T>>;
     delete: (id: id) => Promise<id>;
 }
