@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { PlacesController } from '../controllers/place.js';
-import { authorization } from '../middleware/interceptor.js';
+import { authentication, authorization } from '../middleware/interceptor.js';
 import { PlaceRepository } from '../repositories/place.js';
 import { UserRepository } from '../repositories/user.js';
 
@@ -12,20 +12,30 @@ const placeController = new PlacesController(
 );
 
 travelRouter.get('/', placeController.getAll.bind(placeController));
+
+travelRouter.get(
+    '/find/:key/:value',
+    authorization,
+    placeController.find.bind(placeController)
+);
+
 travelRouter.get('/:id', placeController.get.bind(placeController));
+
 travelRouter.post(
     '/',
     authorization,
     placeController.post.bind(placeController)
 );
-// travelRouter.patch(
-//     '/update/:id',
-//     authorization,
-//     authentication,
-//     placeController.patch.bind(placeController)
-// );
+
+travelRouter.patch(
+    '/places/:id',
+    authorization,
+    authentication,
+    placeController.patch.bind(placeController)
+);
+
 // travelRouter.delete(
-//     '/delete/:id',
+//     '/places/:id',
 //     authorization,
 //     authentication,
 //     placeController.delete.bind(placeController)
