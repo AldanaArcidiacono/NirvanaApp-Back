@@ -91,9 +91,24 @@ export class PlacesController {
 
     async patch(req: Request, res: Response, next: NextFunction) {
         try {
-            debug('patch', req.params.id, req.body);
+            debug('patch');
             const places = await this.placeRepo.update(req.params.id, req.body);
             res.json({ places });
+        } catch (error) {
+            const httpError = new HTTPError(
+                503,
+                'Service unavailable',
+                (error as Error).message
+            );
+            next(httpError);
+        }
+    }
+
+    async delete(req: Request, res: Response, next: NextFunction) {
+        try {
+            debug('delete');
+            await this.placeRepo.destroyer(req.params.id);
+            res.json({ id: req.params.id });
         } catch (error) {
             const httpError = new HTTPError(
                 503,
