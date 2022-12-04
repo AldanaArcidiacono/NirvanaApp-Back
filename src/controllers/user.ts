@@ -111,11 +111,11 @@ export class UsersController {
             if (!req.payload) {
                 throw new Error('Invalid payload');
             }
-
             debug('patch - deleteFav');
 
             const user = await this.userRepo.get(req.payload.id);
 
+            console.log(user.favPlaces, 'REQ', req.params);
             user.favPlaces = await user.favPlaces.filter(
                 (item) => item.id.toString() !== req.params.id
             );
