@@ -39,9 +39,8 @@ export class PlaceRepository implements PlacesRepo<IPlace> {
 
     async query(key: string, value: string): Promise<Array<IPlace>> {
         debug('query', { [key]: value });
-        const result = await this.#Model.find({ [key]: value.toLowerCase() });
-        if (!result) throw new Error('Not found');
-        return result as unknown as Array<IPlace>;
+        const result = await this.#Model.find({ [key]: value });
+        return result as Array<IPlace>;
     }
 
     async update(id: id, data: Partial<IPlace>): Promise<IPlace> {
@@ -53,5 +52,10 @@ export class PlaceRepository implements PlacesRepo<IPlace> {
         return result;
     }
 
-    delete!: (id: string) => Promise<string>;
+    async destroyer(id: id): Promise<{ id: id }> {
+        debug('destroyer', id);
+        const result = await this.#Model.findByIdAndDelete(id);
+        if (result === null) throw new Error('Not found id');
+        return { id: id };
+    }
 }

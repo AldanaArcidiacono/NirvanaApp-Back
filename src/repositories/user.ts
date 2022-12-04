@@ -47,9 +47,11 @@ export class UserRepository implements UserRepo<IUser> {
 
     async update(id: id, data: Partial<IUser>): Promise<IUser> {
         debug('update', id);
-        const result = await this.#Model.findByIdAndUpdate(id, data, {
-            new: true,
-        });
+        const result = await this.#Model
+            .findByIdAndUpdate(id, data, {
+                new: true,
+            })
+            .populate('favPlaces');
         if (!result) throw new Error('Not found id');
         return result;
     }
