@@ -13,3 +13,4 @@ const userController = new UsersController(
 usersRouter.post('/register', userController.register.bind(userController));
 usersRouter.post('/login', userController.login.bind(userController));
 usersRouter.get('/:id', userController.get.bind(userController));
+usersRouter.patch('/places/:id', userController.addFav.bind(userController));

@@ -34,9 +34,9 @@ travelRouter.patch(
     placeController.patch.bind(placeController)
 );
 
-// travelRouter.delete(
-//     '/places/:id',
-//     authorization,
-//     authentication,
-//     placeController.delete.bind(placeController)
-// );
+travelRouter.delete(
+    '/places/:id',
+    authorization,
+    authentication,
+    placeController.delete.bind(placeController)
+);
