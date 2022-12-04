@@ -6,7 +6,7 @@ const debug = createDebug('FP2022:middleware:errors');
 export const errorManager = (
     error: CustomError,
     _req: Request,
-    resp: Response,
+    res: Response,
     _next: NextFunction
 ) => {
     debug(error.name, error.message);
@@ -19,5 +19,7 @@ export const errorManager = (
         type: error.name,
         error: error.message,
     };
-    resp.status(status).json(result).end();
+    res.status(status);
+    res.json(result);
+    res.end();
 };

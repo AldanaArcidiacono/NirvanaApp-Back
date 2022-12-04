@@ -164,22 +164,17 @@ describe('Given the users controller, but something goes wrong', () => {
         expect(error).toBeInstanceOf(HTTPError);
     });
 
-    // test('if addFav does not have a valid payload, it should throw an error', async () => {
-    //     userRepo.update = jest.fn().mockResolvedValue(mockData);
+    test('if addFav does not have a valid payload, it should throw an error', async () => {
+        userRepo.update = jest.fn().mockResolvedValue(mockData);
 
-    //     (req as ExtraRequest).payload = { id: 'pepe' };
-    //     req.params = { id: '638c981be950874190b97fb8' };
+        (req as ExtraRequest).payload = { id: 'pepe' };
+        req.params = { id: '638c981be950874190b97fb8' };
 
-    //     placeRepo.get = jest
-    //         .fn()
-    //         .mockResolvedValue('638c981be950874190b97fb8');
-    //     userRepo.get = jest.fn().mockResolvedValue(mockData[0]);
+        placeRepo.get = jest.fn().mockResolvedValue('638c981be950874190b97fb8');
+        userRepo.get = jest.fn().mockResolvedValue(mockData[0]);
 
-    //     await userController.addFav(
-    //         req as ExtraRequest,
-    //         res as Response,
-    //         next
-    //     );
-    //     expect(error).toThrowError('Invalid payload');
-    // });
+        await userController.addFav(req as ExtraRequest, res as Response, next);
+        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(HTTPError);
+    });
 });

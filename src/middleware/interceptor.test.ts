@@ -1,29 +1,108 @@
-import { NextFunction, Response } from 'express';
-import { verifyToken } from '../services/auth';
-import { ExtraRequest } from './interceptor';
-jest.mock('../services/auth');
+import { NextFunction, Request, Response } from 'express';
+import { HTTPError } from '../interface/error';
+import { UserRepository } from '../repositories/user';
+import { authentication, authorization, ExtraRequest } from './interceptor';
 
-describe("Given the place's controller,", () => {
-    const req: Partial<ExtraRequest> = {};
-    const res: Partial<Response> = {
-        json: jest.fn(),
-    };
-    const next: NextFunction = jest.fn();
+describe('Given the interceptor authorization ', () => {
+    describe('When we instantiate it', () => {
+        test('Then  if verifyToken() reads a correct token, it should return the payload', () => {
+            const req: Partial<ExtraRequest> = {
+                get: jest
+                    .fn()
+                    .mockReturnValueOnce(
+                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODc4NWUwNGRkZjQzMGVlZjFmY2Y2ZCIsIm5hbWUiOiJBbmdvIiwiaWF0IjoxNjcwMTU0MDY1fQ.wgbJEv9s8B_CFcqzOimpWHrGuo9DFOJ09_V4Tep52Pc'
+                    ),
+            };
+            const res: Partial<Response> = {};
+            const next: NextFunction = jest.fn();
 
-    req.get = jest.fn().mockResolvedValue({
-        Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODc4NWUwNGRkZjQzMGVlZjFmY2Y2ZCIsIm5hbWUiOiJBbmdvIiwiaWF0IjoxNjY5ODI2MDY5fQ.wreGdK6IE8dVIlOczs-j6sgxj-iyKL6Jc-jJsuPQB80',
+            authorization(req as ExtraRequest, res as Response, next);
+            expect(next).toHaveBeenCalled();
+
+            expect(req.payload).toStrictEqual({
+                id: expect.any(String),
+                iat: expect.any(Number),
+                name: 'Ango',
+            });
+        });
+
+        test('and authString is empty, it should throw an error', () => {
+            const req: Partial<Request> = {
+                get: jest.fn().mockReturnValueOnce(false),
+            };
+            const res: Partial<Response> = {};
+            const next: NextFunction = jest.fn();
+
+            authorization(req as Request, res as Response, next);
+            expect(next).toHaveBeenCalled();
+        });
+
+        test('Then if verifyToken() checks the token and its not valid, then it should throw an error', () => {
+            const req: Partial<Request> = {
+                get: jest.fn().mockReturnValueOnce('Bearer token'),
+            };
+            const res: Partial<Response> = {};
+            const next: NextFunction = jest.fn();
+
+            authorization(req as Request, res as Response, next);
+            expect(next).toHaveBeenCalled();
+        });
     });
-    (verifyToken as jest.Mock).mockReturnValue(
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODc4NWUwNGRkZjQzMGVlZjFmY2Y2ZCIsIm5hbWUiOiJBbmdvIiwiaWF0IjoxNjY5ODI2MDY5fQ.wreGdK6IE8dVIlOczs-j6sgxj-iyKL6Jc-jJsuPQB80'
-    );
+});
 
-    describe('When we instantiate authorization()', () => {
-        test('It should check the provided token', async () => {
-            const token =
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODc4NWUwNGRkZjQzMGVlZjFmY2Y2ZCIsIm5hbWUiOiJBbmdvIiwiaWF0IjoxNjY5ODI2MDY5fQ.wreGdK6IE8dVIlOczs-j6sgxj-iyKL6Jc-jJsuPQB80';
-            req.payload = verifyToken(token);
-            expect(req.payload).toBe(token);
+describe('Given the interceptor authentication', () => {
+    describe('When we instantiate it', () => {
+        const userRepo = UserRepository.getInstance();
+
+        test('Then if the payload is correct, it should pass the next function with the data', async () => {
+            const req: Partial<ExtraRequest> = {
+                payload: {
+                    id: '638785e04ddf430eef1fcf6d',
+                    name: 'Ango',
+                },
+            };
+            const res: Partial<Response> = {};
+            const next: NextFunction = jest.fn();
+
+            userRepo.get = jest
+                .fn()
+                .mockResolvedValue({ id: '638785e04ddf430eef1fcf6d' });
+
+            await authentication(req as ExtraRequest, res as Response, next);
+            expect(next).toHaveBeenCalled();
+        });
+
+        test('if the req.payload is not correct, then it should throw an error', async () => {
+            const req: Partial<ExtraRequest> = {
+                payload: {
+                    payload: {
+                        id: '638785e04ddf730eef9fcf6d',
+                        name: 'Ango',
+                    },
+                },
+            };
+            const res: Partial<Response> = {};
+            const next: NextFunction = jest.fn();
+
+            await authentication(req as ExtraRequest, res as Response, next);
+            expect(next).toHaveBeenCalled();
+        });
+
+        test('if the req.payload is not correct, then it should throw an error', async () => {
+            const error = new HTTPError(404, 'Not found', 'Not found id');
+            const req: Partial<ExtraRequest> = {
+                payload: {
+                    payload: {
+                        id: '638785e04ddf730eef9fcf6d',
+                        name: 'Ango',
+                    },
+                },
+            };
+            const res: Partial<Response> = {};
+            const next: NextFunction = jest.fn();
+            await authentication(req as ExtraRequest, res as Response, next);
+            expect(error).toBeInstanceOf(Error);
+            expect(error).toBeInstanceOf(HTTPError);
         });
     });
 });
