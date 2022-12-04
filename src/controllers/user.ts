@@ -46,7 +46,12 @@ export class UsersController {
             });
             res.json({ token });
         } catch (error) {
-            next(this.#createHttpError(error as Error));
+            const httpError = new HTTPError(
+                503,
+                'Service unavailable',
+                (error as Error).message
+            );
+            next(httpError);
         }
     }
 
@@ -70,28 +75,25 @@ export class UsersController {
             if (!req.payload) {
                 throw new Error('Invalid payload');
             }
+
             debug('patch - addFav');
+
             const user = await this.userRepo.get(req.payload.id);
-            req.body.favPlaces = user.id;
-            const fav = await this.userRepo.create(req.body);
+            const fav = await this.placesRepo.get(req.params.id);
+
+            if (
+                user.favPlaces.find(
+                    (item) => item.id.toString() === req.params.id
+                )
+            ) {
+                throw Error('Duplicate favorites');
+            }
 
             user.favPlaces.push(fav.id);
+
             this.userRepo.update(user.id.toString(), {
                 favPlaces: user.favPlaces,
             });
-
-            // const user = await this.userRepo.get(req.params.id);
-            // user.favPlaces.push(req.body.id);
-            // const userUpdated = await this.userRepo.update(req.params.id, user);
-
-            // const user = await this.userRepo.find({ id: req.payload.id });
-            // user.favPlaces.filter((fav) => fav.id.toString() !== req.params.id);
-            // await this.userRepo.update(user.id.toString(), {
-            //     favPlaces: user.favPlaces,
-            // });
-            // debug(user.id.toString(), {
-            //     favPlaces: user.favPlaces,
-            // });
 
             res.json({ user });
         } catch (error) {
@@ -104,16 +106,32 @@ export class UsersController {
         }
     }
 
-    #createHttpError(error: Error) {
-        if (error.message === 'Not found id') {
-            const httpError = new HTTPError(404, 'Not Found', error.message);
-            return httpError;
+    async deleteFav(req: ExtraRequest, res: Response, next: NextFunction) {
+        try {
+            if (!req.payload) {
+                throw new Error('Invalid payload');
+            }
+
+            debug('patch - deleteFav');
+
+            const user = await this.userRepo.get(req.payload.id);
+
+            user.favPlaces = await user.favPlaces.filter(
+                (item) => item.id.toString() !== req.params.id
+            );
+
+            this.userRepo.update(user.id.toString(), {
+                favPlaces: user.favPlaces,
+            });
+
+            res.json({ user });
+        } catch (error) {
+            const httpError = new HTTPError(
+                503,
+                'Service unavailable',
+                (error as Error).message
+            );
+            next(httpError);
         }
-        const httpError = new HTTPError(
-            503,
-            'Service unavailable',
-            error.message
-        );
-        return httpError;
     }
 }
