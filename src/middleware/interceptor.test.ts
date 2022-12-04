@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { verifyToken } from '../services/auth';
 import { ExtraRequest } from './interceptor';
 jest.mock('../services/auth');

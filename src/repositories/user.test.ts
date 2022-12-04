@@ -86,8 +86,8 @@ describe('Given UserRepository', () => {
 
         test('and receives an invalid id it should return an error', async () => {
             expect(async () => {
-                await userRepo.update(testIds[4], mockData[5]);
-            }).rejects.toThrow();
+                await userRepo.update(testIds[4], mockData[1]);
+            }).rejects.toThrowError();
         });
     });
 });

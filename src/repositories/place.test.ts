@@ -64,28 +64,40 @@ describe("Given the Place's repository,", () => {
 
     describe('When we instantiate query()', () => {
         test('Then it should query return the search place', async () => {
-            const result = await placeRepo.query('city', 'Jamaica');
+            const result = await placeRepo.query('city', 'jamaica');
             expect(result[0].city).toEqual(newMockData.city);
         });
     });
 
     describe('When we instantiate update()', () => {
+        const updatedMockData = {
+            city: 'Barcelona',
+            description: 'very very nice',
+        };
         test('Then it should update a city', async () => {
-            const updatedMockData = {
-                city: 'Barcelona',
-                description: 'very very nice',
-            };
             const result = await placeRepo.update(testIds[0], updatedMockData);
             expect(result.city).toEqual('Barcelona');
         });
 
         test('and receives an invalid id, it should return an error', async () => {
             expect(async () => {
-                const updatedMockData = {
-                    city: 'Barcelona',
-                    description: 'very very nice',
-                };
-                await placeRepo.update(testIds[0], updatedMockData);
+                await placeRepo.update(
+                    '123456789012345678901234',
+                    updatedMockData
+                );
+            }).rejects.toThrowError();
+        });
+    });
+
+    describe('When we instantiate destroyer()', () => {
+        test('Then it should destroyer return the search place', async () => {
+            const result = await placeRepo.destroyer(testIds[0]);
+            expect(result).toEqual({ id: testIds[0] });
+        });
+
+        test('and receives an invalid id, it should return an error', async () => {
+            expect(async () => {
+                await placeRepo.destroyer('pepe');
             }).rejects.toThrowError();
         });
     });

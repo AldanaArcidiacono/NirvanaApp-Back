@@ -6,26 +6,21 @@ import { UserRepository } from '../repositories/user.js';
 import { PlacesController } from './place.js';
 import { Types } from 'mongoose';
 
-const mockPlace = {
-    places: [{ city: 'Roma', description: 'super-cute' }],
-};
-
-const mockUser = {
-    users: { id: '1a', name: 'Sergio', email: 'sergio@gmil.com' },
-};
-
-const mockResponse = { places: ['Madrid'] };
-
 describe("Given the place's controller,", () => {
+    const mockPlace = {
+        places: [{ city: 'Roma', description: 'super-cute' }],
+    };
+
+    const mockUser = {
+        users: { id: '1a', name: 'Sergio', email: 'sergio@gmil.com' },
+    };
+
+    const mockResponse = { places: ['Madrid'] };
+
     const placeRepo = PlaceRepository.getInstance();
     const userRepo = UserRepository.getInstance();
 
     const userId = new Types.ObjectId();
-
-    placeRepo.create = jest.fn().mockResolvedValue({
-        ...mockPlace.places[0],
-        id: '123456789012345678901234',
-    });
 
     userRepo.get = jest.fn().mockResolvedValue({
         id: userId,
@@ -76,6 +71,10 @@ describe("Given the place's controller,", () => {
     });
 
     describe('When we instantiate post()', () => {
+        placeRepo.create = jest.fn().mockResolvedValue({
+            ...mockPlace.places[0],
+            id: '123456789012345678901234',
+        });
         test('It should return one place', async () => {
             (req as ExtraRequest).payload = { id: userId };
             req.body = {};
@@ -92,6 +91,39 @@ describe("Given the place's controller,", () => {
             expect(res.json).toHaveBeenCalledWith(mockPlace);
         });
     });
+
+    describe('When we instantiate patch()', () => {
+        test('It should return one place', async () => {
+            const updatedMock = {
+                places: [{ city: 'Roma', description: 'very cute' }],
+            };
+            placeRepo.update = jest.fn().mockResolvedValue(updatedMock.places);
+
+            await placeController.patch(
+                req as ExtraRequest,
+                res as Response,
+                next
+            );
+            expect(res.json).toHaveBeenCalledWith(updatedMock);
+        });
+    });
+
+    describe('When we instantiate delete()', () => {
+        test('It should return the deleted id', async () => {
+            (req as ExtraRequest).params = { id: '123456789012345678901234' };
+            req.body = {};
+            placeRepo.destroyer = jest.fn().mockResolvedValue(mockPlace);
+
+            await placeController.delete(
+                req as ExtraRequest,
+                res as Response,
+                next
+            );
+            expect(res.json).toHaveBeenCalledWith({
+                id: '123456789012345678901234',
+            });
+        });
+    });
 });
 
 describe("Given the place's controller but,", () => {
@@ -100,9 +132,6 @@ describe("Given the place's controller but,", () => {
         beforeEach(() => {
             error = new HTTPError(404, 'Not found', 'Not found id');
         });
-        PlaceRepository.prototype.getAll = jest
-            .fn()
-            .mockRejectedValue(['Roma']);
 
         const placeRepo = PlaceRepository.getInstance();
         const repoUser = UserRepository.getInstance();
@@ -161,6 +190,34 @@ describe("Given the place's controller but,", () => {
                 'Not found service'
             );
             await placeController.post(req as Request, resp as Response, next);
+            expect(error).toBeInstanceOf(Error);
+            expect(error).toBeInstanceOf(HTTPError);
+        });
+
+        test('Then patch() should return an error', async () => {
+            placeRepo.update = jest.fn().mockRejectedValue('');
+            error = new HTTPError(
+                503,
+                'Service unavailable',
+                'Not found service'
+            );
+            await placeController.patch(req as Request, resp as Response, next);
+            expect(error).toBeInstanceOf(Error);
+            expect(error).toBeInstanceOf(HTTPError);
+        });
+
+        test('Then delete() should return an error', async () => {
+            placeRepo.destroyer = jest.fn().mockRejectedValue('');
+            error = new HTTPError(
+                503,
+                'Service unavailable',
+                'Not found service'
+            );
+            await placeController.delete(
+                req as Request,
+                resp as Response,
+                next
+            );
             expect(error).toBeInstanceOf(Error);
             expect(error).toBeInstanceOf(HTTPError);
         });
