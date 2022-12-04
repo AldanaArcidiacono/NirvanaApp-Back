@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { HTTPError } from '../interface/error';
 import { UserRepository } from '../repositories/user';
 import { authentication, authorization, ExtraRequest } from './interceptor';
 
@@ -88,8 +87,7 @@ describe('Given the interceptor authentication', () => {
             expect(next).toHaveBeenCalled();
         });
 
-        test('if the req.payload is not correct, then it should throw an error', async () => {
-            const error = new HTTPError(404, 'Not found', 'Not found id');
+        test('if the req.payload is not correct, then it should call next and throw an error', async () => {
             const req: Partial<ExtraRequest> = {
                 payload: {
                     payload: {
@@ -98,11 +96,28 @@ describe('Given the interceptor authentication', () => {
                     },
                 },
             };
+
+            userRepo.get = jest
+                .fn()
+                .mockResolvedValue({ id: '638785e04ddf730eef9fcf6d' });
+
             const res: Partial<Response> = {};
             const next: NextFunction = jest.fn();
+
             await authentication(req as ExtraRequest, res as Response, next);
+
+            expect(next).toHaveBeenCalled();
+        });
+
+        test('Then it should throw an error', () => {
+            const req: Partial<ExtraRequest> = {
+                payload: undefined,
+            };
+            const res: Partial<Response> = {};
+            const next: NextFunction = jest.fn();
+            const error = new Error('Wrong email or password');
+            authentication(req as ExtraRequest, res as Response, next);
             expect(error).toBeInstanceOf(Error);
-            expect(error).toBeInstanceOf(HTTPError);
         });
     });
 });
