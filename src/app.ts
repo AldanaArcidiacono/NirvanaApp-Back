@@ -5,7 +5,6 @@ import { usersRouter } from './router/users.js';
 import { travelRouter } from './router/places.js';
 import { setCors } from './middleware/cors.js';
 import { errorManager } from './middleware/errors.js';
-import { Place } from './entities/place.js';
 
 export const app = express();
 app.disable('x-powered-by');
