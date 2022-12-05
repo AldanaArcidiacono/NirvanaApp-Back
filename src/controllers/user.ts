@@ -81,11 +81,7 @@ export class UsersController {
             const user = await this.userRepo.get(req.payload.id);
             const fav = await this.placesRepo.get(req.params.id);
 
-            if (
-                user.favPlaces.find(
-                    (item) => item.id.toString() === req.params.id
-                )
-            ) {
+            if (user.favPlaces.toString().includes(req.params.id)) {
                 throw Error('Duplicate favorites');
             }
 
@@ -114,7 +110,7 @@ export class UsersController {
             debug('patch - deleteFav');
 
             const user = await this.userRepo.get(req.payload.id);
-            //console.log('USER.FAV', user);
+
             user.favPlaces = user.favPlaces.filter(
                 (item) => item.id.toString() !== req.params.id
             );

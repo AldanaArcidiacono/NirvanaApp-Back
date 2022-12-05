@@ -54,8 +54,9 @@ export class PlaceRepository implements PlacesRepo<IPlace> {
 
     async destroyer(id: id): Promise<{ id: id }> {
         debug('destroyer', id);
-        const result = await this.#Model.findByIdAndDelete(id);
-        if (result === null) throw new Error('Not found id');
+        await this.#Model.findByIdAndDelete(id);
+        // Leyendo la documentacion, comprendi que
+        //if (result === null) throw new Error('Not found id');
         return { id: id };
     }
 }
