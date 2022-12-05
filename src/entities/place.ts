@@ -11,6 +11,7 @@ export type IPlace = {
     mustVisit: string;
     img: string;
     category: Category;
+    userFav: Types.ObjectId;
     owner: Types.ObjectId;
 };
 
@@ -20,6 +21,7 @@ export type IProtoPlace = {
     mustVisit?: string;
     img?: string;
     category?: Category;
+    userFav?: Types.ObjectId;
     owner?: Types.ObjectId;
 };
 
@@ -36,6 +38,7 @@ export const placeSchema = new Schema<IPlace>({
     mustVisit: String,
     img: String,
     category: String,
+    userFav: Types.ObjectId,
     owner: Types.ObjectId,
 });
 

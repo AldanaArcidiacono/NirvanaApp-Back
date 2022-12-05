@@ -22,16 +22,12 @@ describe('Given UserRepository', () => {
     PlaceRepository.getInstance();
     let testIds: Array<string>;
 
-    beforeAll(async () => {
+    beforeEach(async () => {
         await dbConnect();
         await User.deleteMany();
         await User.insertMany(mockData);
         const data = await User.find();
         testIds = [data[0].id, data[1].id];
-    });
-
-    afterAll(async () => {
-        await mongoose.disconnect();
     });
 
     describe('When we instantiate get()', () => {
@@ -67,14 +63,14 @@ describe('Given UserRepository', () => {
 
     describe('When we instantiate find()', () => {
         test('Then it should return one user', async () => {
-            await userRepo.query(mockData[0]);
+            await userRepo.find(mockData[0]);
             expect(mockData[0].name).toEqual('Pepe');
         });
 
         test('and receives an invalid id it should return an error', async () => {
             expect(async () => {
-                await userRepo.query({ name: '' });
-            }).rejects.toThrow();
+                await userRepo.find(mockData[5]);
+            }).rejects.toThrowError(Error);
         });
     });
 
@@ -86,8 +82,12 @@ describe('Given UserRepository', () => {
 
         test('and receives an invalid id it should return an error', async () => {
             expect(async () => {
-                await userRepo.update(testIds[4], mockData[5]);
-            }).rejects.toThrow();
+                await userRepo.update(testIds[4], mockData[1]);
+            }).rejects.toThrowError();
         });
+    });
+
+    afterEach(async () => {
+        await mongoose.disconnect();
     });
 });

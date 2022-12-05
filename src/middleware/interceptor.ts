@@ -38,15 +38,9 @@ export const authentication = async (
     debug('authentication');
     const userRepo = UserRepository.getInstance();
     try {
-        const user = await userRepo.get(req.params.id);
-        if (!req.payload || user.favPlaces.toString() !== req.payload.id) {
-            next(
-                new HTTPError(
-                    403,
-                    'Forbidden',
-                    'Usuario o contraseña incorrecto'
-                )
-            );
+        const user = await userRepo.get((req.payload as JwtPayload).id);
+        if (!req.payload || user.id !== req.payload.id) {
+            next(new HTTPError(403, 'Forbidden', 'Wrong email or password'));
         }
         next();
     } catch (error) {

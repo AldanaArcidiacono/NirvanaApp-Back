@@ -22,6 +22,44 @@ app.get('/', (_req, res) => {
     res.send('API rest of travels. Write /travels to access').end();
 });
 
+// Place.insertMany([
+//     {
+//         city: 'Venecia',
+//         description: 'En Italia con',
+//         mustVisit: '',
+//         img: 'url',
+//         category: 'city',
+//     },
+//     {
+//         city: 'Croacia',
+//         description: 'sdfgd',
+//         mustVisit: '',
+//         img: 'url',
+//         category: 'city',
+//     },
+//     {
+//         city: 'Inglaterra',
+//         description: 'El Big Ben',
+//         mustVisit: '',
+//         img: 'url',
+//         category: 'city',
+//     },
+//     {
+//         city: 'Marruecos',
+//         description: 'En el norte de Africa',
+//         mustVisit: '',
+//         img: 'url',
+//         category: 'city',
+//     },
+//     {
+//         city: 'Japón',
+//         description: 'En Asia',
+//         mustVisit: '',
+//         img: 'url',
+//         category: 'city',
+//     },
+// ]);
+
 app.use('/travels', travelRouter);
 app.use('/users', usersRouter);
 

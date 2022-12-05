@@ -1,10 +1,10 @@
 import { IUser, User } from '../entities/user.js';
-import { id, BasicRepo } from './repo.js';
+import { id, UserRepo } from './repo.js';
 import createDebug from 'debug';
 import { passwdEncrypt } from '../services/auth.js';
 const debug = createDebug('FP2022:repositories:user');
 
-export class UserRepository implements BasicRepo<IUser> {
+export class UserRepository implements UserRepo<IUser> {
     static instance: UserRepository;
 
     public static getInstance(): UserRepository {
@@ -38,18 +38,22 @@ export class UserRepository implements BasicRepo<IUser> {
         return result;
     }
 
-    async query(search: Partial<IUser>): Promise<IUser> {
-        debug('query', { search });
-        const result = await this.#Model.findOne(search);
-        if (!result) throw new Error('Not found id');
+    async find(search: Partial<IUser>): Promise<IUser> {
+        debug('find', { search });
+        const result = await this.#Model.findOne(search).populate('favPlaces');
+        if (!result) {
+            throw new Error('Not found');
+        }
         return result;
     }
 
     async update(id: id, data: Partial<IUser>): Promise<IUser> {
-        debug('patch', id);
-        const result = await this.#Model.findByIdAndUpdate(id, data, {
-            new: true,
-        });
+        debug('update', id);
+        const result = await this.#Model
+            .findByIdAndUpdate(id, data, {
+                new: true,
+            })
+            .populate('favPlaces');
         if (!result) throw new Error('Not found id');
         return result;
     }

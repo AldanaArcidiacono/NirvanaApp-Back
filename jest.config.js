@@ -2,6 +2,7 @@
 export default {
     preset: 'ts-jest',
     testEnvironment: 'node',
+    collectCoverage: true,
     testPathIgnorePatterns: [
         'dist',
         'src/entities',

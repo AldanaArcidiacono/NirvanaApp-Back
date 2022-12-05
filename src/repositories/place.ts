@@ -1,9 +1,9 @@
 import createDebug from 'debug';
 import { IPlace, Place } from '../entities/place.js';
-import { Repo, id } from './repo.js';
+import { id, PlacesRepo } from './repo.js';
 const debug = createDebug('FP2022:repositories:place');
 
-export class PlaceRepository implements Repo<IPlace> {
+export class PlaceRepository implements PlacesRepo<IPlace> {
     static instance: PlaceRepository;
 
     public static getInstance(): PlaceRepository {
@@ -37,6 +37,12 @@ export class PlaceRepository implements Repo<IPlace> {
         return await this.#Model.create(data);
     }
 
+    async query(key: string, value: string): Promise<Array<IPlace>> {
+        debug('query', { [key]: value });
+        const result = await this.#Model.find({ [key]: value });
+        return result as Array<IPlace>;
+    }
+
     async update(id: id, data: Partial<IPlace>): Promise<IPlace> {
         debug('update', id);
         const result = await this.#Model.findByIdAndUpdate(id, data, {
@@ -46,6 +52,10 @@ export class PlaceRepository implements Repo<IPlace> {
         return result;
     }
 
-    delete!: (id: string) => Promise<string>;
-    query!: (data: Partial<IPlace>) => Promise<IPlace>;
+    async destroyer(id: id): Promise<{ id: id }> {
+        debug('destroyer', id);
+        const result = await this.#Model.findByIdAndDelete(id);
+        if (result === null) throw new Error('Not found id');
+        return { id: id };
+    }
 }
