@@ -78,7 +78,7 @@ export class PlacesController {
                 createdPlaces: user.createdPlaces,
             });
 
-            res.status(201).json({ place });
+            res.json({ place });
         } catch (error) {
             const httpError = new HTTPError(
                 503,

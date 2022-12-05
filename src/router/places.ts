@@ -19,11 +19,16 @@ travelRouter.get(
     placeController.find.bind(placeController)
 );
 
-travelRouter.get('/:id', placeController.get.bind(placeController));
+travelRouter.get(
+    '/:id',
+    authorization,
+    placeController.get.bind(placeController)
+);
 
 travelRouter.post(
     '/',
     authorization,
+    authentication,
     placeController.post.bind(placeController)
 );
 

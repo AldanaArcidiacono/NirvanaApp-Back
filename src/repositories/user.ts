@@ -41,10 +41,7 @@ export class UserRepository implements UserRepo<IUser> {
     async find(search: Partial<IUser>): Promise<IUser> {
         debug('find', { search });
         const result = await this.#Model.findOne(search).populate('favPlaces');
-        if (!result) {
-            throw new Error('Not found');
-        }
-        return result;
+        return result as IUser;
     }
 
     async update(id: id, data: Partial<IUser>): Promise<IUser> {
@@ -54,7 +51,6 @@ export class UserRepository implements UserRepo<IUser> {
                 new: true,
             })
             .populate('favPlaces');
-        if (!result) throw new Error('Not found id');
-        return result;
+        return result as IUser;
     }
 }

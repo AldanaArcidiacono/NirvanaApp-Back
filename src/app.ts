@@ -59,8 +59,7 @@ app.get('/', (_req, res) => {
 //         category: 'city',
 //     },
 // ]);
-
-app.use('/travels', travelRouter);
 app.use('/users', usersRouter);
+app.use('/travels', travelRouter);
 
 app.use(errorManager);
