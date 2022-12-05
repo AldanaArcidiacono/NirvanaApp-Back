@@ -114,9 +114,8 @@ export class UsersController {
             debug('patch - deleteFav');
 
             const user = await this.userRepo.get(req.payload.id);
-
-            console.log(user.favPlaces, 'REQ', req.params);
-            user.favPlaces = await user.favPlaces.filter(
+            //console.log('USER.FAV', user);
+            user.favPlaces = user.favPlaces.filter(
                 (item) => item.id.toString() !== req.params.id
             );
 

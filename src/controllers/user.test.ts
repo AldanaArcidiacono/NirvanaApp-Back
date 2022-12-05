@@ -10,20 +10,14 @@ jest.mock('../services/auth');
 
 const mockData = [
     {
-        name: 'Pepe',
-        email: 'pepe@gmail.com',
-        id: '123456789009876543211234',
+        name: 'Ango',
+        email: 'ango@gmail.com',
+        id: '638785e04ddf430eef1fcf6d',
         password: '1234',
         favPlaces: [{ id: '638c981be950874190b97fb7' }],
     },
 ];
-const mockPlace = [
-    {
-        city: 'Marruecos',
-        description: 'En el norte de Africa',
-        id: '638c981be950874190b97fb7',
-    },
-];
+
 const mockResponse = { user: ['Marcos'] };
 
 describe('Given the users controller,', () => {
@@ -97,20 +91,18 @@ describe('Given the users controller,', () => {
         });
 
         // test('Then deleteFav should have been called', async () => {
-        //     (req as ExtraRequest).payload = { id: '123456789009876543211234' };
+        //     (req as ExtraRequest).payload = { id: '638785e04ddf430eef1fcf6d' };
         //     req.params = { id: '638c981be950874190b97fb7' };
 
-        //     placeRepo.get = jest.fn().mockResolvedValue(mockPlace[0]);
         //     userRepo.get = jest.fn().mockResolvedValue(mockData[0]);
-        //     userRepo.update = jest.fn().mockResolvedValue([
-        //         {
-        //             name: 'Pepe',
-        //             email: 'pepe@gmail.com',
-        //             id: '123456789009876543211234',
-        //             password: '1234',
-        //             favPlaces: [],
-        //         },
-        //     ]);
+        //     console.log('MOCKDATA', mockData[0]);
+        //     userRepo.update = jest.fn().mockResolvedValue({
+        //         name: 'Ango',
+        //         email: 'ango@gmail.com',
+        //         id: '638785e04ddf430eef1fcf6d',
+        //         password: '1234',
+        //         favPlaces: [],
+        //     });
 
         //     await userController.deleteFav(
         //         req as ExtraRequest,
@@ -174,6 +166,23 @@ describe('Given the users controller, but something goes wrong', () => {
         userRepo.get = jest.fn().mockResolvedValue(mockData[0]);
 
         await userController.addFav(req as ExtraRequest, res as Response, next);
+        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(HTTPError);
+    });
+
+    test('if deleteFav does not have a valid payload, it should throw an error', async () => {
+        userRepo.update = jest.fn().mockResolvedValue(mockData);
+
+        (req as ExtraRequest).payload = { id: 'pepe' };
+        req.params = { id: '638c981be950874190b97fb8' };
+
+        userRepo.get = jest.fn().mockResolvedValue(mockData[0]);
+
+        await userController.deleteFav(
+            req as ExtraRequest,
+            res as Response,
+            next
+        );
         expect(error).toBeInstanceOf(Error);
         expect(error).toBeInstanceOf(HTTPError);
     });
