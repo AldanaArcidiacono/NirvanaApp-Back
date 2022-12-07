@@ -65,7 +65,10 @@ describe('Given the users controller,', () => {
             (createToken as jest.Mock).mockReturnValue('token');
             req.body = mockData[0].password;
             await userController.login(req as Request, res as Response, next);
-            expect(res.json).toHaveBeenCalledWith({ token: 'token' });
+            expect(res.json).toHaveBeenCalledWith({
+                token: 'token',
+                user: mockData[0],
+            });
         });
 
         test('Then get should have been called', async () => {
@@ -74,6 +77,7 @@ describe('Given the users controller,', () => {
             await userController.get(req as Request, res as Response, next);
             expect(res.json).toHaveBeenCalledWith({ user: mockResponse });
         });
+
         test('Then deleteFav should have been called', async () => {
             (req as ExtraRequest).payload = {
                 id: '638785e04ddf430eef1fcf6d',

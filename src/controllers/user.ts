@@ -44,7 +44,7 @@ export class UsersController {
                 id: user.id.toString(),
                 name: user.name,
             });
-            res.json({ token });
+            res.json({ token, user });
         } catch (error) {
             const httpError = new HTTPError(
                 503,
