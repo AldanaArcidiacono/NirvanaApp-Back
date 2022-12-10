@@ -7,6 +7,7 @@ export type IUser = {
     password: string;
     favPlaces: Array<Types.ObjectId>;
     createdPlaces: Array<Types.ObjectId>;
+    img: string;
 };
 
 export type IProtoUser = {
@@ -15,6 +16,7 @@ export type IProtoUser = {
     password?: string;
     favPlaces?: Array<Types.ObjectId>;
     createdPlaces?: Array<Types.ObjectId>;
+    img?: string;
 };
 
 export const userSchema = new Schema<IUser>({
@@ -40,6 +42,7 @@ export const userSchema = new Schema<IUser>({
             ref: 'Place',
         },
     ],
+    img: String,
 });
 
 userSchema.set('toJSON', {
