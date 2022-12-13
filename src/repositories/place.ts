@@ -52,11 +52,11 @@ export class PlaceRepository implements PlacesRepo<IPlace> {
         return result;
     }
 
-    async destroyer(id: id): Promise<{ id: id }> {
+    async destroyer(id: id): Promise<id> {
         debug('destroyer', id);
         await this.#Model.findByIdAndDelete(id);
         // Leyendo la documentacion, comprendi que
         //if (result === null) throw new Error('Not found id');
-        return { id: id };
+        return id;
     }
 }

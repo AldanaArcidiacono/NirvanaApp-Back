@@ -13,5 +13,5 @@ export interface UserRepo<T> extends BasicRepo<T> {
 export interface PlacesRepo<T> extends BasicRepo<T> {
     getAll: () => Promise<Array<T>>;
     query: (key: string, value: string) => Promise<Array<T>>;
-    destroyer: (id: id) => Promise<{ id: id }>;
+    destroyer: (id: id) => Promise<id>;
 }

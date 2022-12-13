@@ -92,7 +92,7 @@ describe("Given the Place's repository,", () => {
     describe('When we instantiate destroyer()', () => {
         test('Then it should destroyer return the search place', async () => {
             const result = await placeRepo.destroyer(testIds[0]);
-            expect(result).toEqual({ id: testIds[0] });
+            expect(result).toEqual(testIds[0]);
         });
 
         test('and receives an invalid id, it should return an error', async () => {

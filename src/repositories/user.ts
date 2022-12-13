@@ -40,7 +40,10 @@ export class UserRepository implements UserRepo<IUser> {
 
     async find(search: Partial<IUser>): Promise<IUser> {
         debug('find', { search });
-        const result = await this.#Model.findOne(search).populate('favPlaces');
+        const result = await this.#Model
+            .findOne(search)
+            .populate('favPlaces')
+            .populate('createdPlaces');
         return result as IUser;
     }
 
@@ -50,7 +53,8 @@ export class UserRepository implements UserRepo<IUser> {
             .findByIdAndUpdate(id, data, {
                 new: true,
             })
-            .populate('favPlaces');
+            .populate('favPlaces')
+            .populate('createdPlaces');
         return result as IUser;
     }
 }

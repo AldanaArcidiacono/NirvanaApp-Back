@@ -82,7 +82,7 @@ export class UsersController {
             const fav = await this.placesRepo.get(req.params.id);
 
             if (user.favPlaces.toString().includes(req.params.id)) {
-                throw Error('Duplicate favorites');
+                throw new HTTPError(400, 'Bad Request', 'Duplicate favorites');
             }
 
             user.favPlaces.push(fav.id);
